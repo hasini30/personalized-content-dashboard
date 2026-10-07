@@ -174,10 +174,3 @@ The app is deployed on **Render** with persistent disk storage for SQLite:
 
 ---
 
-## Author
-
-**Hasini** · [GitHub](https://github.com/hasini30)
-
-## License
-
-MIT
