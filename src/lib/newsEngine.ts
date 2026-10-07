@@ -840,8 +840,11 @@ const ALL_CATEGORY_KEYS = [
 export function normalizeCategory(category?: string): string {
   if (!category || category === 'all') return 'all';
   const lower = category.toLowerCase().trim();
+  if (lower === 'sport') return 'sports';
   if (lower === 'finance') return 'business';
   if (lower === 'climate') return 'environment';
+  if (lower === 'tech') return 'technology';
+  if (lower === 'culture' || lower === 'arts') return 'entertainment';
   return lower;
 }
 
@@ -1083,6 +1086,16 @@ export function getNewsFeed(options: NewsFeedOptions = {}): NewsFeedResult {
     baseArticles = curated.filter((a) => normalizeCategory(a.category) === requestedCat);
   } else {
     baseArticles = [...curated];
+  }
+
+  // Filter by publisher source if requested
+  if (options.sources && options.sources !== 'all') {
+    const sLower = options.sources.toLowerCase().trim();
+    baseArticles = baseArticles.filter((a) => {
+      const srcName = a.source?.name?.toLowerCase() || '';
+      const author = a.author?.toLowerCase() || '';
+      return srcName.includes(sLower) || sLower.includes(srcName) || author.includes(sLower) || sLower.includes(author);
+    });
   }
 
   // 3. Apply 'preferred' scope prioritization if requested and user has preferences

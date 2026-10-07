@@ -95,6 +95,25 @@ export function extractImageUrl(itemXml: string): string | undefined {
 }
 
 /**
+ * Normalizes raw XML category strings to standard category keys.
+ */
+export function normalizeParsedCategory(raw?: string): string | null {
+  if (!raw) return null;
+  const s = raw.toLowerCase().trim();
+  if (['sport', 'sports', 'cricket', 'football', 'tennis', 'nfl', 'soccer', 'athletics', 'racing'].some((k) => s.includes(k))) return 'sports';
+  if (['tech', 'technology', 'gadget', 'gadgets', 'ai', 'software', 'hardware', 'smartphone'].some((k) => s.includes(k))) return 'technology';
+  if (['business', 'market', 'markets', 'economy', 'finance', 'banking', 'stocks'].some((k) => s.includes(k))) return 'business';
+  if (['entertainment', 'culture', 'movie', 'movies', 'film', 'cinema', 'music', 'tv', 'television', 'arts'].some((k) => s.includes(k))) return 'entertainment';
+  if (['science', 'sci-tech', 'space', 'physics', 'biology', 'astronomy'].some((k) => s.includes(k))) return 'science';
+  if (['health', 'medical', 'medicine', 'wellness'].some((k) => s.includes(k))) return 'health';
+  if (['environment', 'climate', 'wildlife', 'ecology'].some((k) => s.includes(k))) return 'environment';
+  if (['education', 'school', 'university', 'college'].some((k) => s.includes(k))) return 'education';
+  if (['politics', 'national', 'government', 'election', 'policy'].some((k) => s.includes(k))) return 'politics';
+  if (['world', 'international', 'global'].some((k) => s.includes(k))) return 'world';
+  return null;
+}
+
+/**
  * Parses an RSS 2.0 or Atom XML string into structured objects.
  */
 export function parseRssXml(xmlString: string, defaultCategory = 'general'): ParsedRssFeed {
@@ -197,7 +216,13 @@ export function parseRssXml(xmlString: string, defaultCategory = 'general'): Par
     const categoryMatch = itemXml.match(/<category[^>]*>([\s\S]*?)<\/category>/i);
     let category = defaultCategory;
     if (categoryMatch && categoryMatch[1]) {
-      category = stripHtmlTags(categoryMatch[1]).toLowerCase() || defaultCategory;
+      const rawCat = stripHtmlTags(categoryMatch[1]).toLowerCase().trim();
+      const mapped = normalizeParsedCategory(rawCat);
+      if (mapped) {
+        category = mapped;
+      } else if (defaultCategory === 'general' && rawCat.length > 2) {
+        category = rawCat;
+      }
     }
 
     items.push({

@@ -193,4 +193,27 @@ describe('NewsPage Component', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('allows clicking publisher chips to filter news by publisher', () => {
+    renderWithProviders(<NewsPage />);
+
+    const publisherChip = screen.getByRole('button', { name: /bbc news/i });
+    expect(publisherChip).toBeInTheDocument();
+    fireEvent.click(publisherChip);
+    expect(publisherChip).toHaveClass('bg-secondary');
+  });
+
+  it('provides sort selector with newest, oldest, and alphabetical sorting', () => {
+    renderWithProviders(<NewsPage />);
+
+    const sortSelect = screen.getByLabelText(/sort news stories/i);
+    expect(sortSelect).toBeInTheDocument();
+    expect(sortSelect).toHaveValue('newest');
+
+    fireEvent.change(sortSelect, { target: { value: 'oldest' } });
+    expect(sortSelect).toHaveValue('oldest');
+
+    fireEvent.change(sortSelect, { target: { value: 'title' } });
+    expect(sortSelect).toHaveValue('title');
+  });
 });

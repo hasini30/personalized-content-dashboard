@@ -256,6 +256,134 @@ export const DEFAULT_TRUSTED_RSS_FEEDS: RssFeedConfig[] = [
       'https://images.unsplash.com/photo-1507499739999-097706ad8914?w=800&auto=format&fit=crop&q=80',
     enabled: true,
   },
+
+  // SPORTS
+  {
+    id: 'bbc-sports',
+    name: 'BBC Sport - Headlines',
+    publisher: 'BBC News',
+    category: 'sports',
+    url: 'https://feeds.bbci.co.uk/sport/rss.xml',
+    defaultImage:
+      'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'thehindu-sports',
+    name: 'The Hindu - Sport',
+    publisher: 'The Hindu',
+    category: 'sports',
+    url: 'https://www.thehindu.com/sport/feeder/default.rss',
+    defaultImage:
+      'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'guardian-sports',
+    name: 'The Guardian - Sport',
+    publisher: 'The Guardian',
+    category: 'sports',
+    url: 'https://www.theguardian.com/sport/rss',
+    defaultImage:
+      'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'toi-sports',
+    name: 'Times of India - Sports',
+    publisher: 'Times of India',
+    category: 'sports',
+    url: 'https://timesofindia.indiatimes.com/rssfeeds/4719148.cms',
+    defaultImage:
+      'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+
+  // ENTERTAINMENT
+  {
+    id: 'bbc-entertainment',
+    name: 'BBC News - Entertainment & Arts',
+    publisher: 'BBC News',
+    category: 'entertainment',
+    url: 'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml',
+    defaultImage:
+      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'thehindu-entertainment',
+    name: 'The Hindu - Entertainment',
+    publisher: 'The Hindu',
+    category: 'entertainment',
+    url: 'https://www.thehindu.com/entertainment/feeder/default.rss',
+    defaultImage:
+      'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'guardian-culture',
+    name: 'The Guardian - Culture & Entertainment',
+    publisher: 'The Guardian',
+    category: 'entertainment',
+    url: 'https://www.theguardian.com/culture/rss',
+    defaultImage:
+      'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'toi-entertainment',
+    name: 'Times of India - Entertainment',
+    publisher: 'Times of India',
+    category: 'entertainment',
+    url: 'https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms',
+    defaultImage:
+      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+
+  // ENVIRONMENT
+  {
+    id: 'guardian-environment',
+    name: 'The Guardian - Environment',
+    publisher: 'The Guardian',
+    category: 'environment',
+    url: 'https://www.theguardian.com/environment/rss',
+    defaultImage:
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'thehindu-environment',
+    name: 'The Hindu - Environment',
+    publisher: 'The Hindu',
+    category: 'environment',
+    url: 'https://www.thehindu.com/sci-tech/energy-and-environment/feeder/default.rss',
+    defaultImage:
+      'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+
+  // EDUCATION
+  {
+    id: 'thehindu-education',
+    name: 'The Hindu - Education',
+    publisher: 'The Hindu',
+    category: 'education',
+    url: 'https://www.thehindu.com/education/feeder/default.rss',
+    defaultImage:
+      'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
+  {
+    id: 'toi-education',
+    name: 'Times of India - Education',
+    publisher: 'Times of India',
+    category: 'education',
+    url: 'https://timesofindia.indiatimes.com/rssfeeds/913168846.cms',
+    defaultImage:
+      'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80',
+    enabled: true,
+  },
 ];
 
 // Active registry that allows dynamic registration/removal
@@ -309,7 +437,13 @@ export function getFeedsForCategory(category?: string): RssFeedConfig[] {
   if (!category || category === 'all') {
     return feeds;
   }
-  const norm = category.toLowerCase().trim();
+  let norm = category.toLowerCase().trim();
+  if (norm === 'sport') norm = 'sports';
+  if (norm === 'culture' || norm === 'arts') norm = 'entertainment';
+  if (norm === 'climate') norm = 'environment';
+  if (norm === 'tech') norm = 'technology';
+  if (norm === 'finance') norm = 'business';
+
   const matched = feeds.filter((f) => f.category === norm);
   return matched.length > 0 ? matched : feeds;
 }
@@ -324,7 +458,11 @@ export function getFeedsForPublisher(publisher?: string): RssFeedConfig[] {
   }
   const norm = publisher.toLowerCase().trim();
   const matched = feeds.filter(
-    (f) => f.publisher.toLowerCase() === norm || f.name.toLowerCase().includes(norm)
+    (f) =>
+      f.publisher.toLowerCase() === norm ||
+      f.publisher.toLowerCase().includes(norm) ||
+      norm.includes(f.publisher.toLowerCase()) ||
+      f.name.toLowerCase().includes(norm)
   );
   return matched.length > 0 ? matched : feeds;
 }

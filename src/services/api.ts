@@ -147,17 +147,24 @@ export const apiSlice = createApi({
       },
       serializeQueryArgs: ({ endpointName, queryArgs }) => {
         const category = queryArgs?.category || 'all';
+        const sources = queryArgs?.sources || 'all';
         const q = queryArgs?.q || '';
         const lang = queryArgs?.lang || 'en';
         const scope = queryArgs?.scope || 'all';
         const pref = queryArgs?.preferredCategories || '';
-        return `${endpointName}(${category}_${q}_${lang}_${scope}_${pref})`;
+        return `${endpointName}(${category}_${sources}_${q}_${lang}_${scope}_${pref})`;
       },
       merge: (currentCache, newItems, { arg }) => {
         return mergePaginatedItems(currentCache, newItems, arg?.page || 1);
       },
       forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.page !== previousArg?.page;
+        return (
+          currentArg?.page !== previousArg?.page ||
+          currentArg?.category !== previousArg?.category ||
+          currentArg?.sources !== previousArg?.sources ||
+          currentArg?.q !== previousArg?.q ||
+          currentArg?.lang !== previousArg?.lang
+        );
       },
       providesTags: (result) =>
         result

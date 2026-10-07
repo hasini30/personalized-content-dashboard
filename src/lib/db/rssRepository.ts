@@ -130,7 +130,7 @@ export function saveRssArticleWithChangeDetection(article: DbRssArticle): {
       article.url,
       article.published_at,
       article.image_url || null,
-      article.category || 'general',
+      normalizeCategory(article.category || 'general'),
       article.author || null,
       article.created_at || now,
       article.updated_at || null
@@ -138,6 +138,7 @@ export function saveRssArticleWithChangeDetection(article: DbRssArticle): {
 
     const savedItem = dbArticleToContentItem({
       ...article,
+      category: normalizeCategory(article.category || 'general'),
       created_at: article.created_at || now,
     });
 
@@ -172,7 +173,7 @@ export function saveRssArticleWithChangeDetection(article: DbRssArticle): {
     const updatedContent = article.content ?? existing.content;
     const updatedImage = article.image_url ?? existing.image_url;
     const updatedPub = article.published_at || existing.published_at;
-    const updatedCategory = article.category || existing.category;
+    const updatedCategory = normalizeCategory(article.category || existing.category || 'general');
     const updatedAuthor = article.author || existing.author;
     const updatedAt = now;
 
@@ -295,6 +296,57 @@ export interface RssCursorQueryResult {
   total: number;
 }
 
+export function normalizeCategory(cat?: string): string {
+  if (!cat || cat === 'all') return 'all';
+  const s = cat.toLowerCase().trim();
+  if (['sport', 'sports', 'cricket', 'football', 'tennis', 'nfl', 'soccer', 'athletics', 'racing'].some((k) => s.includes(k))) return 'sports';
+  if (['tech', 'technology', 'gadget', 'gadgets', 'ai', 'software', 'hardware', 'smartphone'].some((k) => s.includes(k))) return 'technology';
+  if (['business', 'market', 'markets', 'economy', 'finance', 'banking', 'stocks'].some((k) => s.includes(k))) return 'business';
+  if (['entertainment', 'culture', 'movie', 'movies', 'film', 'cinema', 'music', 'tv', 'television', 'arts'].some((k) => s.includes(k))) return 'entertainment';
+  if (['science', 'sci-tech', 'space', 'physics', 'biology', 'astronomy'].some((k) => s.includes(k))) return 'science';
+  if (['health', 'medical', 'medicine', 'wellness'].some((k) => s.includes(k))) return 'health';
+  if (['environment', 'climate', 'wildlife', 'ecology'].some((k) => s.includes(k))) return 'environment';
+  if (['education', 'school', 'university', 'college'].some((k) => s.includes(k))) return 'education';
+  if (['politics', 'national', 'government', 'election', 'policy'].some((k) => s.includes(k))) return 'politics';
+  if (['world', 'international', 'global'].some((k) => s.includes(k))) return 'world';
+  return s;
+}
+
+export function applyCategoryAndSourceFilters(
+  conditions: string[],
+  params: unknown[],
+  category?: string | null,
+  source?: string | null
+): void {
+  if (category && category !== 'all') {
+    const norm = normalizeCategory(category);
+    conditions.push(`(
+      LOWER(category) = ?
+      OR LOWER(category) LIKE '%' || ? || '%'
+      OR (? = 'sports' AND LOWER(category) IN ('sport', 'cricket', 'football', 'tennis', 'australia cricket team', 'nfl'))
+      OR (? = 'technology' AND LOWER(category) IN ('tech', 'smartphones', 'ai', 'ai (artificial intelligence)', 'gadgets', 'apps', 'wearable technology'))
+      OR (? = 'entertainment' AND LOWER(category) IN ('culture', 'film', 'movies', 'music', 'television', 'games', 'stage', 'comedy', 'musicals'))
+      OR (? = 'business' AND LOWER(category) IN ('economy', 'finance', 'markets', 'industry', 'stock markets', 'banking'))
+      OR (? = 'science' AND LOWER(category) IN ('sci-tech', 'space', 'glaciers', 'fungi', 'sharks'))
+      OR (? = 'environment' AND LOWER(category) IN ('climate crisis', 'environment', 'wildlife', 'greenhouse gas emissions'))
+      OR (? = 'politics' AND LOWER(category) IN ('politics', 'national', 'government', 'election', 'elections', 'us news', 'uk news', 'australian politics'))
+      OR (? = 'education' AND LOWER(category) IN ('schools', 'us universities', 'university of cambridge', 'education'))
+    )`);
+    params.push(norm, norm, norm, norm, norm, norm, norm, norm, norm, norm);
+  }
+
+  if (source && source !== 'all') {
+    const normSource = source.toLowerCase().trim();
+    conditions.push(`(
+      LOWER(source) = ?
+      OR LOWER(source) LIKE '%' || ? || '%'
+      OR ? LIKE '%' || LOWER(source) || '%'
+      OR (author IS NOT NULL AND (LOWER(author) LIKE '%' || ? || '%' OR ? LIKE '%' || LOWER(author) || '%'))
+    )`);
+    params.push(normSource, normSource, normSource, normSource, normSource);
+  }
+}
+
 /**
  * Fetches RSS articles with cursor-based pagination for smooth infinite scrolling.
  * Sort order is published_at DESC, id DESC.
@@ -330,15 +382,7 @@ export function getRssArticlesWithCursor(
     params.push(cursorPayload.p, cursorPayload.p, cursorPayload.i);
   }
 
-  if (category) {
-    conditions.push('LOWER(category) = ?');
-    params.push(category);
-  }
-
-  if (source) {
-    conditions.push('LOWER(source) = LOWER(?)');
-    params.push(source);
-  }
+  applyCategoryAndSourceFilters(conditions, params, category, source);
 
   if (q) {
     conditions.push('(LOWER(title) LIKE ? OR LOWER(description) LIKE ?)');
@@ -418,15 +462,7 @@ export function getRssArticlesPaginated(options: {
     params.push(currentYear);
   }
 
-  if (category) {
-    conditions.push('LOWER(category) = ?');
-    params.push(category);
-  }
-
-  if (source) {
-    conditions.push('LOWER(source) = LOWER(?)');
-    params.push(source);
-  }
+  applyCategoryAndSourceFilters(conditions, params, category, source);
 
   if (q) {
     conditions.push('(LOWER(title) LIKE ? OR LOWER(description) LIKE ?)');
@@ -526,15 +562,7 @@ export function getRssArticlesTotalCount(
     params.push(currentYear);
   }
 
-  if (category) {
-    conditions.push('LOWER(category) = ?');
-    params.push(category);
-  }
-
-  if (source) {
-    conditions.push('LOWER(source) = LOWER(?)');
-    params.push(source);
-  }
+  applyCategoryAndSourceFilters(conditions, params, category, source);
 
   if (q) {
     conditions.push('(LOWER(title) LIKE ? OR LOWER(description) LIKE ?)');

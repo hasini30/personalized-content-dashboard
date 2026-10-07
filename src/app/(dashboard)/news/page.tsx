@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Newspaper, Sparkles, RefreshCw, Filter, Search } from 'lucide-react';
+import { Newspaper, Sparkles, RefreshCw, Filter, Search, ArrowUpDown } from 'lucide-react';
 import { useGetNewsQuery } from '@/services/api';
 import { useAppSelector } from '@/store/hooks';
 import { ContentCard } from '@/components/cards/ContentCard';
@@ -42,6 +42,82 @@ const TRUSTED_PUBLISHERS = [
   'The Guardian',
 ] as const;
 
+function matchesCategory(itemCategory: string, selectedCategory: string): boolean {
+  if (!selectedCategory || selectedCategory === 'all') return true;
+  const target = selectedCategory.toLowerCase().trim();
+  const cat = (itemCategory || '').toLowerCase().trim();
+  if (cat === target) return true;
+
+  if (target === 'sports') {
+    return ['sport', 'sports', 'cricket', 'football', 'tennis', 'nfl', 'soccer', 'athletics', 'racing', 'cycling'].some((k) => cat.includes(k));
+  }
+  if (target === 'technology') {
+    return ['tech', 'technology', 'gadget', 'gadgets', 'ai', 'software', 'hardware', 'smartphone', 'apple', 'google'].some((k) => cat.includes(k));
+  }
+  if (target === 'business') {
+    return ['business', 'market', 'markets', 'economy', 'finance', 'banking', 'stocks', 'industry'].some((k) => cat.includes(k));
+  }
+  if (target === 'entertainment') {
+    return ['entertainment', 'culture', 'movie', 'movies', 'film', 'cinema', 'music', 'tv', 'television', 'arts', 'games', 'celebrity'].some((k) => cat.includes(k));
+  }
+  if (target === 'science') {
+    return ['science', 'sci-tech', 'space', 'physics', 'biology', 'astronomy', 'research', 'glacier'].some((k) => cat.includes(k));
+  }
+  if (target === 'health') {
+    return ['health', 'medical', 'medicine', 'wellness', 'hospital', 'disease'].some((k) => cat.includes(k));
+  }
+  if (target === 'environment') {
+    return ['environment', 'climate', 'wildlife', 'ecology', 'nature', 'conservation'].some((k) => cat.includes(k));
+  }
+  if (target === 'education') {
+    return ['education', 'school', 'university', 'college', 'students', 'learning'].some((k) => cat.includes(k));
+  }
+  if (target === 'politics') {
+    return ['politics', 'national', 'government', 'election', 'policy', 'parliament', 'senate'].some((k) => cat.includes(k));
+  }
+  if (target === 'world') {
+    return ['world', 'international', 'global'].some((k) => cat.includes(k));
+  }
+
+  return cat.includes(target) || target.includes(cat);
+}
+
+function matchesPublisher(item: ContentItem, selectedPublisher: string): boolean {
+  if (!selectedPublisher || selectedPublisher === 'all') return true;
+  const target = selectedPublisher.toLowerCase().trim();
+  const author = (item.author || '').toLowerCase();
+  const title = (item.title || '').toLowerCase();
+  const url = (item.url || '').toLowerCase();
+  const hashtags = (item.hashtags || []).join(' ').toLowerCase();
+
+  if (target === 'bbc news' || target === 'bbc') {
+    return author.includes('bbc') || url.includes('bbc') || hashtags.includes('bbc');
+  }
+  if (target === 'reuters') {
+    return author.includes('reuters') || url.includes('reuters') || hashtags.includes('reuters');
+  }
+  if (target === 'the hindu') {
+    return author.includes('hindu') || url.includes('thehindu') || hashtags.includes('hindu');
+  }
+  if (target === 'times of india') {
+    return (
+      author.includes('times of india') ||
+      author.includes('toi') ||
+      url.includes('indiatimes') ||
+      url.includes('timesofindia') ||
+      hashtags.includes('timesofindia')
+    );
+  }
+  if (target === 'techcrunch') {
+    return author.includes('techcrunch') || url.includes('techcrunch') || hashtags.includes('techcrunch');
+  }
+  if (target === 'the guardian') {
+    return author.includes('guardian') || url.includes('theguardian') || hashtags.includes('guardian');
+  }
+
+  return author.includes(target) || target.includes(author) || title.includes(target) || url.includes(target);
+}
+
 export default function NewsPage() {
   const preferences = useAppSelector((state) => state.preferences);
   const preferredCategories = preferences.categories.map((c) => c.toLowerCase());
@@ -49,6 +125,7 @@ export default function NewsPage() {
 
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [selectedPublisher, setSelectedPublisher] = React.useState<string>('all');
+  const [selectedSort, setSelectedSort] = React.useState<'newest' | 'oldest' | 'title'>('newest');
   const [searchQuery, setSearchQuery] = React.useState<string>('');
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(12);
@@ -131,37 +208,41 @@ export default function NewsPage() {
     preferredCategories: preferredCategories.join(','),
   });
 
-  // Reset pagination on filter or search change
+  // Reset pagination on filter, publisher, search, language, or sort change
   React.useEffect(() => {
     setPage(1);
-  }, [selectedCategory, selectedPublisher, debouncedSearch, contentLanguage]);
+  }, [selectedCategory, selectedPublisher, debouncedSearch, contentLanguage, selectedSort]);
 
   const items = React.useMemo(() => {
-    let rawLive = liveNewArticles;
+    let combined = deduplicateContentItems([...liveNewArticles, ...(newsData?.items || [])]);
+
+    if (Object.keys(updatedArticlesMap).length > 0) {
+      combined = combined.map((item) => {
+        const match =
+          updatedArticlesMap[item.id] ||
+          (item.url && item.url !== '#' ? updatedArticlesMap[item.url] : undefined);
+        return match ? { ...item, ...match, isUpdated: true } : item;
+      });
+    }
+
     if (selectedCategory !== 'all') {
-      rawLive = rawLive.filter((i) => i.category.toLowerCase() === selectedCategory.toLowerCase());
+      combined = combined.filter((i) => matchesCategory(i.category, selectedCategory));
     }
+
     if (selectedPublisher !== 'all') {
-      rawLive = rawLive.filter(
-        (i) =>
-          i.author?.toLowerCase().includes(selectedPublisher.toLowerCase()) ||
-          i.title.toLowerCase().includes(selectedPublisher.toLowerCase())
-      );
+      combined = combined.filter((i) => matchesPublisher(i, selectedPublisher));
     }
 
-    const baseList = deduplicateContentItems([...rawLive, ...(newsData?.items || [])]);
-
-    if (Object.keys(updatedArticlesMap).length === 0) {
-      return baseList;
+    if (selectedSort === 'newest') {
+      combined.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    } else if (selectedSort === 'oldest') {
+      combined.sort((a, b) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime());
+    } else if (selectedSort === 'title') {
+      combined.sort((a, b) => a.title.localeCompare(b.title));
     }
 
-    return baseList.map((item) => {
-      const match =
-        updatedArticlesMap[item.id] ||
-        (item.url && item.url !== '#' ? updatedArticlesMap[item.url] : undefined);
-      return match ? { ...item, ...match, isUpdated: true } : item;
-    });
-  }, [liveNewArticles, newsData?.items, selectedCategory, selectedPublisher, updatedArticlesMap]);
+    return combined;
+  }, [liveNewArticles, newsData?.items, selectedCategory, selectedPublisher, selectedSort, updatedArticlesMap]);
 
   const hasMore = Boolean(newsData?.hasMore);
   const isInitialLoading = page === 1 && isLoading;
@@ -252,6 +333,28 @@ export default function NewsPage() {
               >
                 Pages
               </button>
+            </div>
+
+            {/* Sort Order Selector */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-muted/60 border border-border/50 text-xs">
+              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+              <select
+                id="news-sort-select"
+                value={selectedSort}
+                onChange={(e) => setSelectedSort(e.target.value as 'newest' | 'oldest' | 'title')}
+                className="bg-transparent border-none text-xs font-medium text-foreground focus:outline-none cursor-pointer pr-1"
+                aria-label="Sort news stories"
+              >
+                <option value="newest" className="bg-card text-foreground">
+                  Newest First
+                </option>
+                <option value="oldest" className="bg-card text-foreground">
+                  Oldest First
+                </option>
+                <option value="title" className="bg-card text-foreground">
+                  Headline (A–Z)
+                </option>
+              </select>
             </div>
 
             <Button
@@ -377,11 +480,14 @@ export default function NewsPage() {
             description={
               debouncedSearch
                 ? `No news matching "${debouncedSearch}" in the selected category.`
+                : selectedPublisher !== 'all'
+                ? `No news stories from ${selectedPublisher} found in this category.`
                 : 'No news stories are currently available for this category.'
             }
-            actionLabel="Show All Categories"
+            actionLabel="Show All News"
             onAction={() => {
               setSelectedCategory('all');
+              setSelectedPublisher('all');
               setSearchQuery('');
             }}
           />

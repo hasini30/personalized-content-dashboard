@@ -9,6 +9,7 @@ import {
   saveRssArticles,
   DbRssArticle,
   getRssArticlesTotalCount,
+  normalizeCategory,
 } from '@/lib/db/rssRepository';
 import { startRssIngestionScheduler } from './rssIngestionService';
 import { isArticleDateFresh } from '@/lib/dateUtils';
@@ -208,11 +209,26 @@ export async function getLiveRssNews(options: RssFetchOptions = {}): Promise<Rss
   let filtered = allItems;
 
   if (category !== 'all') {
-    filtered = filtered.filter((i) => i.category.toLowerCase() === category);
+    const norm = normalizeCategory(category);
+    filtered = filtered.filter((i) => {
+      const itemNorm = normalizeCategory(i.category);
+      return itemNorm === norm || i.category.toLowerCase().includes(norm);
+    });
   }
 
   if (source && source !== 'all') {
-    filtered = filtered.filter((i) => i.author?.toLowerCase() === source.toLowerCase());
+    const sLower = source.toLowerCase().trim();
+    filtered = filtered.filter((i) => {
+      const authorLower = i.author?.toLowerCase() || '';
+      const hashtagsLower = (i.hashtags || []).join(' ').toLowerCase();
+      const urlLower = i.url.toLowerCase();
+      return (
+        authorLower.includes(sLower) ||
+        sLower.includes(authorLower) ||
+        hashtagsLower.includes(sLower.replace(/[^a-z0-9]/g, '')) ||
+        urlLower.includes(sLower.replace(/\s+/g, ''))
+      );
+    });
   }
 
   if (q) {

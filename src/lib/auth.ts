@@ -80,12 +80,12 @@ export function registerMockUser(data: {
   return newUser;
 }
 
+export const AUTH_SECRET =
+  process.env.NEXTAUTH_SECRET ||
+  'feedpulse_secure_jwt_session_signing_secret_key_32chars_min_2026';
+
 export const authOptions: NextAuthOptions = {
-  secret:
-    process.env.NEXTAUTH_SECRET ||
-    (process.env.NODE_ENV === 'production'
-      ? undefined
-      : 'development_secret_key_1234567890_abcdefg'),
+  secret: AUTH_SECRET,
   session: {
     strategy: 'jwt',
   },

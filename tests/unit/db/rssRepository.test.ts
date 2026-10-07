@@ -142,6 +142,17 @@ describe('RSS Repository with SQLite Database', () => {
     expect(hinduItems.items[0].title).toContain('Semiconductor');
   });
 
+  it('supports flexible category and publisher matching (synonyms and partial names)', () => {
+    saveRssArticles(sampleArticles);
+
+    const techItems = getRssArticlesPaginated({ category: 'tech' });
+    expect(techItems.items.length).toBeGreaterThan(0);
+
+    const hinduPartial = getRssArticlesPaginated({ source: 'Hindu' });
+    expect(hinduPartial.items.length).toBe(1);
+    expect(hinduPartial.items[0].author).toBe('The Hindu');
+  });
+
   it('encodes and decodes base64url pagination cursors cleanly', () => {
     const original = { published_at: '2026-10-05T12:00:00.000Z', id: 'rss-test-id' };
     const cursorStr = encodeCursor(original);

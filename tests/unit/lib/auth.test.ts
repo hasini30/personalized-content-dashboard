@@ -25,6 +25,12 @@ describe('Auth Configuration and Provider', () => {
     expect(MOCK_USERS['priya@example.com']).toBeDefined();
   });
 
+  it('exports a valid non-empty AUTH_SECRET and configures it in authOptions', () => {
+    expect(authOptions.secret).toBeDefined();
+    expect(typeof authOptions.secret).toBe('string');
+    expect((authOptions.secret as string).length).toBeGreaterThan(16);
+  });
+
   it('authorizes valid mock credentials successfully', async () => {
     const user = await authorize({
       email: 'alex@example.com',
