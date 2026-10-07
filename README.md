@@ -4,7 +4,7 @@
 
 FeedPulse is an personalized intelligence dashboard that unifies high-frequency live intelligence across **Global News**, **Trending Cinema**, and **Community Social Discussions** into a single, adaptive, and accessible interface.
 
-• [Live app](https://personalized-content-dashboard-3zlf.onrender.com/)
+• [Live app](https://personalized-content-dashboard-3zlf.onrender.com/) • [Project Documentation](PROJECT_DOCUMENT.md)
 
 > **Try it:** sign in with `alex@example.com` / `password123`, or create your own account.
 > If the app was idle, the first load can take about 30-60 seconds while the server wakes up.
