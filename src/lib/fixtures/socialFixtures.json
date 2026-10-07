@@ -1,0 +1,163 @@
+[
+  {
+    "id": "post-101",
+    "author": {
+      "name": "Elena Rostova",
+      "handle": "@elena_ai",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "Just deployed an autonomous multi-agent evaluation pipeline with Next.js 14 and RTK Query! The state sync and cache invalidation are silky smooth. 🚀⚡️",
+    "category": "technology",
+    "hashtags": ["webdev", "ai", "react", "nextjs"],
+    "publishedAt": "2026-03-03T11:20:00Z",
+    "metrics": { "likes": 342, "retweets": 48, "replies": 19 },
+    "mediaUrl": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "post-102",
+    "author": {
+      "name": "Marcus Vance",
+      "handle": "@marcus_markets",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "Energy tech equities experiencing strong institutional inflows today. When capital allocation aligns with structural efficiency breakthroughs, the compounding is undeniable. 📈📊",
+    "category": "finance",
+    "hashtags": ["investing", "finance", "energy", "markets"],
+    "publishedAt": "2026-03-03T10:45:00Z",
+    "metrics": { "likes": 512, "retweets": 84, "replies": 32 }
+  },
+  {
+    "id": "post-103",
+    "author": {
+      "name": "Clara Chen",
+      "handle": "@claracinema",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "Re-watched Dune Part Two in 70mm IMAX last night. Hans Zimmer's sound design paired with Greig Fraser's cinematography is a masterclass in modern world-building. 🎬✨",
+    "category": "entertainment",
+    "hashtags": ["movies", "dune", "cinema", "imax"],
+    "publishedAt": "2026-03-03T09:30:00Z",
+    "metrics": { "likes": 894, "retweets": 120, "replies": 45 },
+    "mediaUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "post-104",
+    "author": {
+      "name": "Coach Liam Davis",
+      "handle": "@liamdavis_fit",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "Zone 2 aerobic conditioning combined with progressive overload resistance training remains the gold standard for metabolic longevity. Consistency over intensity every single week. 💪🏃",
+    "category": "health",
+    "hashtags": ["fitness", "health", "longevity", "running"],
+    "publishedAt": "2026-03-03T08:15:00Z",
+    "metrics": { "likes": 670, "retweets": 75, "replies": 28 }
+  },
+  {
+    "id": "post-105",
+    "author": {
+      "name": "Dr. Sarah Kepler",
+      "handle": "@kepler_astronomy",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "New spectroscopic data from the James Webb Space Telescope reveals atmospheric biosignature candidates in the TRAPPIST-1 system. Peer review manuscript drops Thursday! 🔭🌌",
+    "category": "science",
+    "hashtags": ["science", "astronomy", "jwst", "space"],
+    "publishedAt": "2026-03-03T07:00:00Z",
+    "metrics": { "likes": 1420, "retweets": 310, "replies": 88 },
+    "mediaUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "post-106",
+    "author": {
+      "name": "Devin Torres",
+      "handle": "@devintorres",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "Tip for frontend performance: Combine RTK Query automatic deduplication with sensible stale-while-revalidate caching headers. Your servers will thank you. ⚡️💻",
+    "category": "technology",
+    "hashtags": ["webdev", "frontend", "typescript", "performance"],
+    "publishedAt": "2026-03-02T21:40:00Z",
+    "metrics": { "likes": 420, "retweets": 63, "replies": 14 }
+  },
+  {
+    "id": "post-107",
+    "author": {
+      "name": "Maya Lin",
+      "handle": "@mayagreen",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "Our neighborhood community microgrid hit 100% solar self-sufficiency for the 7th consecutive day! Battery storage was the missing link. ☀️🔋",
+    "category": "environment",
+    "hashtags": ["cleanenergy", "solar", "microgrid", "sustainability"],
+    "publishedAt": "2026-03-02T19:15:00Z",
+    "metrics": { "likes": 830, "retweets": 145, "replies": 37 }
+  },
+  {
+    "id": "post-108",
+    "author": {
+      "name": "Jordan Bell",
+      "handle": "@jordanhoops",
+      "avatar": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "That game-winner from 35 feet out with 0.8s on the clock was absolute poetry. Playoff basketball is undefeated! 🏀🔥",
+    "category": "sports",
+    "hashtags": ["basketball", "buzzerbeater", "playoffs", "clutch"],
+    "publishedAt": "2026-03-02T18:00:00Z",
+    "metrics": { "likes": 1250, "retweets": 280, "replies": 94 },
+    "mediaUrl": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "post-109",
+    "author": {
+      "name": "Amina Touré",
+      "handle": "@aminaglobal",
+      "avatar": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "The High Seas Treaty ratification is proof that multilateral diplomacy still works when humanity protects what belongs to all of us. 🌊🤝",
+    "category": "world",
+    "hashtags": ["oceanconservation", "diplomacy", "treaty", "highseas"],
+    "publishedAt": "2026-03-02T16:20:00Z",
+    "metrics": { "likes": 980, "retweets": 210, "replies": 51 }
+  },
+  {
+    "id": "post-110",
+    "author": {
+      "name": "Kenji Sato",
+      "handle": "@kenjicities",
+      "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "Walked 12km through Tokyo's pedestrianized green corridors this afternoon. Tree canopies, pocket parks, and no car horns. This is how cities heal. 🌳🚶",
+    "category": "general",
+    "hashtags": ["urbanism", "walkability", "tokyo", "greencities"],
+    "publishedAt": "2026-03-02T14:45:00Z",
+    "metrics": { "likes": 1540, "retweets": 330, "replies": 72 },
+    "mediaUrl": "https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=800&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "post-111",
+    "author": {
+      "name": "Prof. David Thorne",
+      "handle": "@thorneed",
+      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "When students build interactive simulations rather than just reading equations, their retention doubles. Active inquiry over passive lectures every single time. 📚💡",
+    "category": "education",
+    "hashtags": ["education", "stem", "learning", "teaching"],
+    "publishedAt": "2026-03-02T12:10:00Z",
+    "metrics": { "likes": 640, "retweets": 95, "replies": 23 }
+  },
+  {
+    "id": "post-112",
+    "author": {
+      "name": "Sophia Martinez",
+      "handle": "@sophiapolicy",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80"
+    },
+    "content": "New digital privacy protections mandate clear explainability for algorithmic feeds. Users deserve to know why content appears on their screen. 🛡️📱",
+    "category": "politics",
+    "hashtags": ["privacy", "techpolicy", "algorithms", "rights"],
+    "publishedAt": "2026-03-02T10:30:00Z",
+    "metrics": { "likes": 770, "retweets": 115, "replies": 41 }
+  }
+]

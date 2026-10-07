@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.github
+.husky
+tests
+coverage
+*.log
+.env*.local
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
